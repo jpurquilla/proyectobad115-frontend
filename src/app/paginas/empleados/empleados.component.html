@@ -1,0 +1,102 @@
+<p-table [value]="empleados" dataKey="id" [responsiveLayout]="'scroll'">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>ID</th>
+            <th>Primer Nombre</th>
+            <th>Segundo Nombre</th>
+            <th>Primer Apellido</th>
+            <th>Segundo Apellido</th>
+            <th>Apellido de Casada</th>
+            <th>Emails</th>
+            <th>Género</th>
+            <th>Estado Civil</th>
+            <th>Documentos</th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-empleado>
+        <tr>
+            <td>{{empleado.id}}</td>
+            <td>{{empleado.primerNombre}}</td>
+            <td>{{empleado.segundoNombre}}</td>
+            <td>{{empleado.primerApellido}}</td>
+            <td>{{empleado.segundoApellido}}</td>
+            <td>{{empleado.apellidoCasada}}</td>
+            <td>
+                <ul>
+                    <li *ngFor="let email of empleado.emails">{{email}}</li>
+                </ul>
+            </td>
+            <td>{{getGeneroLabel(empleado.genero)}}</td>
+            <td>{{getEstadoCivilLabel(empleado.estadoCivil)}}</td>
+            <td>
+                <ul>
+                    <li *ngFor="let doc of empleado.documentos">{{getTipoDocumentoLabel(doc.tipo)}}: {{doc.numero}}</li>
+                </ul>
+            </td>
+            <td>
+                <button pButton type="button" icon="pi pi-pencil" (click)="editarEmpleado(empleado)" label="Editar"></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog header="Editar Empleado" [(visible)]="mostrarDialogo" [modal]="true" [style]="{width: '600px'}" [closable]="false">
+    <form *ngIf="empleadoSeleccionado">
+        <div class="p-fluid p-formgrid p-grid">
+            <div class="p-field p-col-12 p-md-6">
+                <label>ID</label>
+                <input pInputText [readonly]="true" [(ngModel)]="empleadoSeleccionado!.id" name="id" />
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label>Primer Nombre</label>
+                <input pInputText [(ngModel)]="empleadoSeleccionado!.primerNombre" name="primerNombre" />
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label>Segundo Nombre</label>
+                <input pInputText [(ngModel)]="empleadoSeleccionado!.segundoNombre" name="segundoNombre" />
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label>Primer Apellido</label>
+                <input pInputText [(ngModel)]="empleadoSeleccionado!.primerApellido" name="primerApellido" />
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label>Segundo Apellido</label>
+                <input pInputText [(ngModel)]="empleadoSeleccionado!.segundoApellido" name="segundoApellido" />
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label>Apellido de Casada</label>
+                <input pInputText [(ngModel)]="empleadoSeleccionado!.apellidoCasada" name="apellidoCasada" />
+            </div>
+            <div class="p-field p-col-12">
+                <label>Emails</label>
+                <!-- <div *ngFor="let email of empleadoSeleccionado?.emails || []; let i = index" class="p-inputgroup">
+                     <input pInputText [(ngModel)]="empleadoSeleccionado!.emails[i]" [name]="'email' + i" />
+                    <button pButton type="button" icon="pi pi-trash" class="p-button-danger" (click)="eliminarEmail(i)" *ngIf="empleadoSeleccionado.emails.length > 1"></button> 
+                </div> -->
+                <button pButton type="button" icon="pi pi-plus" (click)="agregarEmail()" label="Agregar Email"></button>
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label>Género</label>
+                <p-dropdown [options]="generos" [(ngModel)]="empleadoSeleccionado!.genero" name="genero" optionLabel="label" optionValue="value"></p-dropdown>
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label>Estado Civil</label>
+                <p-dropdown [options]="estadosCiviles" [(ngModel)]="empleadoSeleccionado!.estadoCivil" name="estadoCivil" optionLabel="label" optionValue="value"></p-dropdown>
+            </div>
+            <div class="p-field p-col-12">
+                <label>Documentos Personales</label>
+                <!-- <div *ngFor="let doc of empleadoSeleccionado.documentos; let j = index" class="p-inputgroup">
+                     <p-dropdown [options]="tiposDocumento" [(ngModel)]="empleadoSeleccionado!.documentos[j].tipo" [name]="'tipoDoc' + j" optionLabel="label" optionValue="value" style="width: 150px"></p-dropdown>
+                    <input pInputText [(ngModel)]="empleadoSeleccionado!.documentos[j].numero" [name]="'numeroDoc' + j" placeholder="Número" />
+                    <button pButton type="button" icon="pi pi-trash" class="p-button-danger" (click)="eliminarDocumento(j)" *ngIf="empleadoSeleccionado.documentos.length > 1"></button> 
+                </div> -->
+                <button pButton type="button" icon="pi pi-plus" (click)="agregarDocumento()" label="Agregar Documento"></button>
+            </div>
+        </div>
+        <div class="p-dialog-footer">
+            <button pButton type="button" label="Guardar" icon="pi pi-check" (click)="guardarEmpleado()"></button>
+            <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="cancelarEdicion()"></button>
+        </div>
+    </form>
+</p-dialog>
