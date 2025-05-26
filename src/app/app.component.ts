@@ -8,5 +8,5 @@ import { RouterModule } from '@angular/router';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'proyectobad115-frontend';
+  title = 'Sistema de Planillas';
 }

@@ -30,9 +30,7 @@
                             "input": "public"
                         }],
                         "styles": [
-                            "src/styles.scss",
-
-                            "node_modules/primeicons/primeicons.css"
+                            "src/styles.scss"
                         ],
                         "scripts": [],
                         "server": "src/main.server.ts",
@@ -93,14 +91,15 @@
                             "input": "public"
                         }],
                         "styles": [
-                            "src/styles.scss",
-                            "node_modules/@primeng/theme/theme.css",
-                            "node_modules/primeicons/primeicons.css"
+                            "src/styles.scss"
                         ],
                         "scripts": []
                     }
                 }
             }
         }
+    },
+    "cli": {
+        "analytics": false
     }
 }

@@ -4,14 +4,18 @@ export interface DocumentoPersonal {
 }
 
 export interface Empleado {
-  id?: number;
-  primerNombre?: string;
+  id: number; // Changed from 'id?: number' or 'id: number | undefined'
+  primerNombre: string;
   segundoNombre?: string;
   primerApellido: string;
   segundoApellido?: string;
   apellidoCasada?: string;
-  emails?: string[];
   genero?: string;
   estadoCivil?: string;
-  documentos?: DocumentoPersonal[];
+  emails: string[];
+  documentos: { tipo: string; numero: string }[];
+  // New fields
+  plaza?: string;
+  puestoTrabajo?: string;
+  salarioMensual?: number;
 }

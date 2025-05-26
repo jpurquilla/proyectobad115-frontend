@@ -6,7 +6,11 @@ import { EmpleadosComponent } from './paginas/empleados/empleados.component';
 export const routes: Routes = [
     { path: '', component: LoginComponent }, // Ruta inicial
     { path: 'main', component: LayoutComponent, children: [
-        { path: 'empleados', component: EmpleadosComponent }
+        { path: 'empleados', component: EmpleadosComponent },
+        {
+          path: 'planillas',
+          loadComponent: () => import('./paginas/planillas/planillas.component').then(m => m.PlanillasComponent)
+        },
     ] },
     { path: '**', redirectTo: '' } 
 ];

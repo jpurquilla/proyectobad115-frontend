@@ -2,14 +2,11 @@
     <header class="layout-header">
         <h1 class="header-title">Sistema de Planilla</h1>
     </header>
+
     <aside class="layout-sidebar">
-        <p-panelMenu [model]="[
-            {label: 'Inicio', icon: 'pi pi-home'},
-            {label: 'Empleados', icon: 'pi pi-users', routerLink: ['/main/empleados']},
-            {label: 'Planillas', icon: 'pi pi-briefcase'},
-            {label: 'Reportes', icon: 'pi pi-chart-bar'}
-        ]"></p-panelMenu>
+        <p-panelMenu [model]="menuItems"></p-panelMenu>
     </aside>
+
     <main class="layout-content">
         <router-outlet></router-outlet>
     </main>

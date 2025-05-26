@@ -1,102 +1,181 @@
-<p-table [value]="empleados" dataKey="id" [responsiveLayout]="'scroll'">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>ID</th>
-            <th>Primer Nombre</th>
-            <th>Segundo Nombre</th>
-            <th>Primer Apellido</th>
-            <th>Segundo Apellido</th>
-            <th>Apellido de Casada</th>
-            <th>Emails</th>
-            <th>Género</th>
-            <th>Estado Civil</th>
-            <th>Documentos</th>
-            <th>Acciones</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-empleado>
-        <tr>
-            <td>{{empleado.id}}</td>
-            <td>{{empleado.primerNombre}}</td>
-            <td>{{empleado.segundoNombre}}</td>
-            <td>{{empleado.primerApellido}}</td>
-            <td>{{empleado.segundoApellido}}</td>
-            <td>{{empleado.apellidoCasada}}</td>
-            <td>
-                <ul>
-                    <li *ngFor="let email of empleado.emails">{{email}}</li>
-                </ul>
-            </td>
-            <td>{{getGeneroLabel(empleado.genero)}}</td>
-            <td>{{getEstadoCivilLabel(empleado.estadoCivil)}}</td>
-            <td>
-                <ul>
-                    <li *ngFor="let doc of empleado.documentos">{{getTipoDocumentoLabel(doc.tipo)}}: {{doc.numero}}</li>
-                </ul>
-            </td>
-            <td>
-                <button pButton type="button" icon="pi pi-pencil" (click)="editarEmpleado(empleado)" label="Editar"></button>
-            </td>
-        </tr>
-    </ng-template>
-</p-table>
+<div class="container">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>Gestión de Empleados</h2>
+            <p-button icon="pi pi-plus" label="Nuevo Empleado" class="p-button-rounded p-button-outlined" (click)="nuevoEmpleado()"></p-button>
+        </div>
 
-<p-dialog header="Editar Empleado" [(visible)]="mostrarDialogo" [modal]="true" [style]="{width: '600px'}" [closable]="false">
-    <form *ngIf="empleadoSeleccionado">
-        <div class="p-fluid p-formgrid p-grid">
-            <div class="p-field p-col-12 p-md-6">
-                <label>ID</label>
-                <input pInputText [readonly]="true" [(ngModel)]="empleadoSeleccionado!.id" name="id" />
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label>Primer Nombre</label>
-                <input pInputText [(ngModel)]="empleadoSeleccionado!.primerNombre" name="primerNombre" />
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label>Segundo Nombre</label>
-                <input pInputText [(ngModel)]="empleadoSeleccionado!.segundoNombre" name="segundoNombre" />
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label>Primer Apellido</label>
-                <input pInputText [(ngModel)]="empleadoSeleccionado!.primerApellido" name="primerApellido" />
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label>Segundo Apellido</label>
-                <input pInputText [(ngModel)]="empleadoSeleccionado!.segundoApellido" name="segundoApellido" />
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label>Apellido de Casada</label>
-                <input pInputText [(ngModel)]="empleadoSeleccionado!.apellidoCasada" name="apellidoCasada" />
-            </div>
-            <div class="p-field p-col-12">
-                <label>Emails</label>
-                <!-- <div *ngFor="let email of empleadoSeleccionado?.emails || []; let i = index" class="p-inputgroup">
-                     <input pInputText [(ngModel)]="empleadoSeleccionado!.emails[i]" [name]="'email' + i" />
-                    <button pButton type="button" icon="pi pi-trash" class="p-button-danger" (click)="eliminarEmail(i)" *ngIf="empleadoSeleccionado.emails.length > 1"></button> 
-                </div> -->
-                <button pButton type="button" icon="pi pi-plus" (click)="agregarEmail()" label="Agregar Email"></button>
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label>Género</label>
-                <p-dropdown [options]="generos" [(ngModel)]="empleadoSeleccionado!.genero" name="genero" optionLabel="label" optionValue="value"></p-dropdown>
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label>Estado Civil</label>
-                <p-dropdown [options]="estadosCiviles" [(ngModel)]="empleadoSeleccionado!.estadoCivil" name="estadoCivil" optionLabel="label" optionValue="value"></p-dropdown>
-            </div>
-            <div class="p-field p-col-12">
-                <label>Documentos Personales</label>
-                <!-- <div *ngFor="let doc of empleadoSeleccionado.documentos; let j = index" class="p-inputgroup">
-                     <p-dropdown [options]="tiposDocumento" [(ngModel)]="empleadoSeleccionado!.documentos[j].tipo" [name]="'tipoDoc' + j" optionLabel="label" optionValue="value" style="width: 150px"></p-dropdown>
-                    <input pInputText [(ngModel)]="empleadoSeleccionado!.documentos[j].numero" [name]="'numeroDoc' + j" placeholder="Número" />
-                    <button pButton type="button" icon="pi pi-trash" class="p-button-danger" (click)="eliminarDocumento(j)" *ngIf="empleadoSeleccionado.documentos.length > 1"></button> 
-                </div> -->
-                <button pButton type="button" icon="pi pi-plus" (click)="agregarDocumento()" label="Agregar Documento"></button>
-            </div>
+        <div class="card-body">
+            <p-table [value]="empleados" [paginator]="true" [rows]="10" styleClass="p-datatable-responsive p-datatable-striped">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Género</th>
+                        <th>Estado Civil</th>
+                        <th>Plaza</th>
+                        <th>Puesto</th>
+                        <th>Salario</th>
+                        <th>Documentos</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-empleado>
+                    <tr>
+                        <td>{{ empleado.id }}</td>
+                        <td>
+                            {{ empleado.primerNombre }} {{ empleado.segundoNombre }} {{ empleado.primerApellido }} {{ empleado.segundoApellido }}
+                            <span *ngIf="empleado.apellidoCasada"> de {{ empleado.apellidoCasada }}</span>
+                        </td>
+                        <td>{{ getGeneroLabel(empleado.genero) }}</td>
+                        <td>{{ getEstadoCivilLabel(empleado.estadoCivil) }}</td>
+                        <td>{{ getPlazaLabel(empleado.plaza) }}</td>
+                        <td>{{ empleado.puestoTrabajo }}</td>
+                        <td style="text-align: right;">
+                            ${{ empleado.salarioMensual | number:'1.2-2' }}
+                        </td>
+                        <td>
+                            <div *ngFor="let doc of empleado.documentos">
+                                <span>{{ getTipoDocumentoLabel(doc.tipo) }}: {{ doc.numero }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div *ngFor="let email of empleado.emails">{{ email }}</div>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button pButton type="button" icon="pi pi-pencil" class="p-button-primary p-button-sm" (click)="editarEmpleado(empleado)">
+                                </button>
+                                <button pButton type="button" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="confirmarEliminar(empleado)">
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="10" class="text-center">
+                            No hay empleados registrados en el sistema.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
         </div>
-        <div class="p-dialog-footer">
-            <button pButton type="button" label="Guardar" icon="pi pi-check" (click)="guardarEmpleado()"></button>
-            <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="cancelarEdicion()"></button>
+    </div>
+
+    <!-- Modal para agregar/editar empleados -->
+    <p-dialog [(visible)]="mostrarDialogo" [style]="{width: '850px'}" header="Datos del Empleado" [modal]="true" [draggable]="false" [resizable]="false" [maximizable]="true">
+
+        <div class="p-fluid">
+            <!-- ID Field -->
+            <div class="mb-3">
+                <label for="id" class="form-label d-block mb-1">ID</label>
+                <input id="id" type="text" pInputText [(ngModel)]="empleadoSeleccionado.id" disabled />
+            </div>
+
+            <!-- Información Personal section -->
+            <div class="mb-4">
+                <h5>Información Personal</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="primerNombre" class="form-label d-block mb-1">Primer Nombre*</label>
+                        <input id="primerNombre" type="text" pInputText [(ngModel)]="empleadoSeleccionado.primerNombre" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="segundoNombre" class="form-label d-block mb-1">Segundo Nombre</label>
+                        <input id="segundoNombre" type="text" pInputText [(ngModel)]="empleadoSeleccionado.segundoNombre" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="primerApellido" class="form-label d-block mb-1">Primer Apellido*</label>
+                        <input id="primerApellido" type="text" pInputText [(ngModel)]="empleadoSeleccionado.primerApellido" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="segundoApellido" class="form-label d-block mb-1">Segundo Apellido</label>
+                        <input id="segundoApellido" type="text" pInputText [(ngModel)]="empleadoSeleccionado.segundoApellido" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="apellidoCasada" class="form-label d-block mb-1">Apellido de Casada</label>
+                    <input id="apellidoCasada" type="text" pInputText [(ngModel)]="empleadoSeleccionado.apellidoCasada" />
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="genero" class="form-label d-block mb-1">Género*</label>
+                        <p-dropdown id="genero" [options]="generos" [(ngModel)]="empleadoSeleccionado.genero" placeholder="Seleccione un género" [style]="{'width': '100%'}" required>
+                        </p-dropdown>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="estadoCivil" class="form-label d-block mb-1">Estado Civil*</label>
+                        <p-dropdown id="estadoCivil" [options]="estadosCiviles" [(ngModel)]="empleadoSeleccionado.estadoCivil" placeholder="Seleccione un estado civil" [style]="{'width': '100%'}" required>
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información Laboral Section -->
+            <div class="mb-4">
+                <h5>Información Laboral</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="plaza" class="form-label d-block mb-1">Plaza*</label>
+                        <p-dropdown id="plaza" [options]="plazas" [(ngModel)]="empleadoSeleccionado.plaza" placeholder="Seleccione una plaza" [style]="{'width': '100%'}" required>
+                        </p-dropdown>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="puestoTrabajo" class="form-label d-block mb-1">Puesto de Trabajo*</label>
+                        <input id="puestoTrabajo" type="text" pInputText [(ngModel)]="empleadoSeleccionado.puestoTrabajo" required />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="salarioMensual" class="form-label d-block mb-1">Salario Mensual*</label>
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-dollar"></i>
+                        <input id="salarioMensual" type="number" pInputText [(ngModel)]="empleadoSeleccionado.salarioMensual" required />
+                    </span>
+                </div>
+            </div>
+
+            <!-- Emails Section -->
+            <!-- <div class="mb-4">
+                <h5>Correos Electrónicos</h5>
+                <div *ngFor="let email of empleadoSeleccionado.emails; let i = index" class="d-flex mb-2">
+                    <input type="email" pInputText class="me-2 flex-grow-1" [(ngModel)]="empleadoSeleccionado.emails[i]" placeholder="Correo electrónico" />
+                    <button pButton type="button" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="eliminarEmail(i)" *ngIf="empleadoSeleccionado.emails.length > 1">
+                    </button>
+                </div>
+                <button pButton type="button" icon="pi pi-plus" label="Agregar Email" class="p-button-secondary p-button-sm mt-2" (click)="empleadoSeleccionado.emails.push('')">
+                </button>
+            </div> -->
+
+            <!-- Documentos Section -->
+            <!-- <div class="mb-4">
+                <h5>Documentos de Identidad</h5>
+                <div *ngFor="let doc of empleadoSeleccionado.documentos; let i = index" class="d-flex mb-2">
+                    <p-dropdown [options]="tiposDocumento" [(ngModel)]="doc.tipo" placeholder="Tipo de documento" class="me-2" [style]="{'width': '180px'}">
+                    </p-dropdown>
+                    <input type="text" pInputText class="me-2 flex-grow-1" [(ngModel)]="doc.numero" placeholder="Número de documento" />
+                    <button pButton type="button" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="eliminarDocumento(i)" *ngIf="empleadoSeleccionado.documentos.length > 1">
+                    </button>
+                </div>
+                <button pButton type="button" icon="pi pi-plus" label="Agregar Documento" class="p-button-secondary p-button-sm mt-2" (click)="agregarDocumento()">
+                </button>
+            </div> -->
         </div>
-    </form>
-</p-dialog>
+
+        <ng-template pTemplate="footer">
+            <div class="d-flex justify-content-end gap-2">
+                <button pButton type="button" label="Cancelar" class="p-button-secondary" (click)="cancelarEdicion()">
+                </button>
+                <button pButton type="button" label="Guardar" class="p-button-primary" (click)="guardarEmpleado()">
+                </button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <!-- Confirmation and toast components -->
+    <p-confirmDialog></p-confirmDialog>
+    <p-toast></p-toast>
+</div>
