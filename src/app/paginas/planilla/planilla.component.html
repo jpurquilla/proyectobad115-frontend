@@ -1,0 +1,144 @@
+<div class="container">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>Cálculo de Planilla</h2>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="me-2">Fecha de cálculo:</span>
+                    <strong>{{ fechaCalculo | date:'dd/MM/yyyy' }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Opciones de cálculo -->
+            <div class="mb-4 p-3 bg-light rounded">
+                <div class="d-flex align-items-center gap-4">
+                    <div>
+                        <label class="font-weight-bold">Tipo de período:</label>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="field-radiobutton">
+                            <p-radioButton name="periodo" value="mensual" [(ngModel)]="periodoSeleccionado" (onClick)="cambiarPeriodo()"></p-radioButton>
+                            <label class="ms-2">Mensual</label>
+                        </div>
+                        <div class="field-radiobutton">
+                            <p-radioButton name="periodo" value="quincenal" [(ngModel)]="periodoSeleccionado" (onClick)="cambiarPeriodo()"></p-radioButton>
+                            <label class="ms-2">Quincenal</label>
+                        </div>
+                    </div>
+                    <div>
+                        <button pButton type="button" label="Recalcular Planilla" icon="pi pi-refresh" (click)="calcularPlanilla()"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de planilla -->
+            <p-panel header="Resumen de Planilla" [toggleable]="true" styleClass="mb-4">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="p-card p-3 bg-light">
+                            <div class="font-weight-bold">Total Salarios Base:</div>
+                            <div class="h5 text-primary">${{ totalPlanilla.totalSalarios | number:'1.2-2' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-card p-3 bg-light">
+                            <div class="font-weight-bold">Total Deducciones:</div>
+                            <div class="h5 text-danger">${{ totalPlanilla.totalDeducciones | number:'1.2-2' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-card p-3 bg-light">
+                            <div class="font-weight-bold">Total Salarios Netos:</div>
+                            <div class="h5 text-success">${{ totalPlanilla.totalNeto | number:'1.2-2' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="p-card p-3 bg-light">
+                            <div class="font-weight-bold">Total Aportaciones Patronales:</div>
+                            <div class="h5 text-info">${{ totalPlanilla.totalPatronal | number:'1.2-2' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="p-card p-3 bg-light">
+                            <div class="font-weight-bold">Costo Total Empresa:</div>
+                            <div class="h5 text-dark">${{ totalPlanilla.totalCosto | number:'1.2-2' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </p-panel>
+
+            <!-- Tabla de planilla -->
+            <p-table [value]="planillaEmpleados" [paginator]="true" [rows]="10" styleClass="p-datatable-responsive p-datatable-gridlines" [rowHover]="true" [scrollable]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th rowspan="2">ID</th>
+                        <th rowspan="2">Nombre Empleado</th>
+                        <th colspan="2" class="text-center">Salario</th>
+                        <th colspan="4" class="text-center bg-light">Deducciones del Empleado</th>
+                        <th colspan="5" class="text-center bg-light-blue">Aportaciones Patronales</th>
+                    </tr>
+                    <tr>
+                        <th class="text-end">Mensual</th>
+                        <th class="text-end">{{ periodoSeleccionado === 'mensual' ? 'Periodo' : 'Quincenal' }}</th>
+
+                        <!-- Deducciones -->
+                        <th class="text-end bg-light">ISSS (3%)</th>
+                        <th class="text-end bg-light">AFP (7.25%)</th>
+                        <th class="text-end bg-light">ISR</th>
+                        <th class="text-end bg-light">Neto a Pagar</th>
+
+                        <!-- Aportaciones patronales -->
+                        <th class="text-end bg-light-blue">ISSS (7.5%)</th>
+                        <th class="text-end bg-light-blue">AFP (7.75%)</th>
+                        <th class="text-end bg-light-blue">INSAFORP (5%)</th>
+                        <th class="text-end bg-light-blue">Total Patronal</th>
+                        <th class="text-end bg-light-blue">Costo Total</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-empleado>
+                    <tr>
+                        <td>{{ empleado.id }}</td>
+                        <td>{{ empleado.nombreCompleto }}</td>
+                        <td class="text-end">${{ empleado.salarioMensual | number:'1.2-2' }}</td>
+                        <td class="text-end">
+                            ${{ periodoSeleccionado === 'mensual' ? (empleado.salarioMensual | number:'1.2-2') : (empleado.salarioQuincenal | number:'1.2-2') }}
+                        </td>
+
+                        <!-- Deducciones -->
+                        <td class="text-end">${{ empleado.isss | number:'1.2-2' }}</td>
+                        <td class="text-end">${{ empleado.afp | number:'1.2-2' }}</td>
+                        <td class="text-end">${{ empleado.renta | number:'1.2-2' }}</td>
+                        <td class="text-end font-weight-bold">${{ empleado.salarioNeto | number:'1.2-2' }}</td>
+
+                        <!-- Aportaciones patronales -->
+                        <td class="text-end">${{ empleado.isssPatronal | number:'1.2-2' }}</td>
+                        <td class="text-end">${{ empleado.afpPatronal | number:'1.2-2' }}</td>
+                        <td class="text-end">${{ empleado.insaforvPatronal | number:'1.2-2' }}</td>
+                        <td class="text-end">${{ empleado.totalPatronal | number:'1.2-2' }}</td>
+                        <td class="text-end font-weight-bold">${{ empleado.costoTotal | number:'1.2-2' }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="2" class="font-weight-bold">TOTALES</td>
+                        <td class="text-end font-weight-bold">${{ totalPlanilla.totalSalarios | number:'1.2-2' }}</td>
+                        <td class="text-end font-weight-bold">
+                            ${{ periodoSeleccionado === 'mensual' ? (totalPlanilla.totalSalarios | number:'1.2-2') : (totalPlanilla.totalSalarios / 2 | number:'1.2-2') }}
+                        </td>
+
+                        <!-- Totales deducciones -->
+                        <td colspan="3" class="text-end font-weight-bold">${{ totalPlanilla.totalDeducciones | number:'1.2-2' }}</td>
+                        <td class="text-end font-weight-bold">${{ totalPlanilla.totalNeto | number:'1.2-2' }}</td>
+
+                        <!-- Totales patronales -->
+                        <td colspan="3" class="text-end font-weight-bold"></td>
+                        <td class="text-end font-weight-bold">${{ totalPlanilla.totalPatronal | number:'1.2-2' }}</td>
+                        <td class="text-end font-weight-bold">${{ totalPlanilla.totalCosto | number:'1.2-2' }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

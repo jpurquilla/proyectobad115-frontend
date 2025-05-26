@@ -1,0 +1,31 @@
+.bg-light-blue {
+    background-color: #e6f7ff !important;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.font-weight-bold {
+    font-weight: 600 !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead>tr>th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+:host ::ng-deep .p-datatable-scrollable .p-datatable-thead>tr>th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+:host ::ng-deep .p-datatable-gridlines .p-datatable-tbody>tr>td {
+    border: 1px solid #e9ecef;
+}
+
+:host ::ng-deep .p-panel .p-panel-header {
+    background: #f8f9fa;
+}

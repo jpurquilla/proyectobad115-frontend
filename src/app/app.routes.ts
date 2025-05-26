@@ -9,7 +9,7 @@ export const routes: Routes = [
         { path: 'empleados', component: EmpleadosComponent },
         {
           path: 'planillas',
-          loadComponent: () => import('./paginas/planillas/planillas.component').then(m => m.PlanillasComponent)
+          loadComponent: () => import('./paginas/planilla/planilla.component').then(m => m.PlanillaComponent)
         },
     ] },
     { path: '**', redirectTo: '' } 
