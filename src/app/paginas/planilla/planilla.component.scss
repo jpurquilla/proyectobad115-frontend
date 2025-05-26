@@ -29,3 +29,145 @@
 :host ::ng-deep .p-panel .p-panel-header {
     background: #f8f9fa;
 }
+
+// Estilos para la boleta de pago
+.boleta-contenido {
+    padding: 15px;
+    font-family: Arial, sans-serif;
+}
+
+.info-empresa {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.info-empresa h2 {
+    margin-bottom: 5px;
+}
+
+.titulo-boleta {
+    text-align: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.info-empleado {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.tabla-resumen {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.tabla-resumen th,
+.tabla-resumen td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.tabla-resumen th {
+    background-color: #f2f2f2;
+}
+
+.text-end {
+    text-align: right;
+}
+
+.total {
+    font-weight: bold;
+}
+
+.bg-success-light {
+    background-color: #d4edda;
+}
+
+.firma {
+    margin-top: 50px;
+    border-top: 1px solid #000;
+    width: 200px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.info-adicional {
+    font-size: 0.85em;
+    font-style: italic;
+    margin-top: 20px;
+    border-top: 1px dotted #ccc;
+    padding-top: 10px;
+}
+
+@media print {
+    .p-dialog-mask,
+    .p-dialog-header-icons,
+    .p-dialog-footer {
+        display: none !important;
+    }
+    .p-dialog {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .p-dialog-content {
+        padding: 0 !important;
+    }
+    .boleta-contenido {
+        padding: 0;
+    }
+}
+
+
+/* Modifica la definición del encabezado de la tabla */
+
+:host ::ng-deep .p-datatable .p-datatable-thead>tr>th:nth-child(1) {
+    width: 80px;
+}
+
+
+/* Estilos para el botón en la columna de acciones */
+
+:host ::ng-deep .p-datatable .p-datatable-tbody>tr>td:last-child {
+    text-align: center;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody>tr>td:last-child button {
+    margin: 0 auto;
+}
+
+// Estilos específicos para PDF
+.pdf-only {
+    display: none;
+}
+
+// Estilo para el spinner de carga
+:host ::ng-deep .p-button-loading .p-button-label {
+    opacity: 0.6;
+}
+
+// Optimizaciones para impresión en PDF
+@media print {
+    .boleta-contenido {
+        padding: 10mm;
+        max-width: 210mm;
+    }
+    .tabla-resumen {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5mm;
+        margin-bottom: 5mm;
+    }
+    .tabla-resumen th,
+    .tabla-resumen td {
+        padding: 2mm;
+    }
+    .pdf-only {
+        display: block;
+    }
+}

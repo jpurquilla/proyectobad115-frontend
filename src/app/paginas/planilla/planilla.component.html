@@ -13,23 +13,29 @@
         <div class="card-body">
             <!-- Opciones de cálculo -->
             <div class="mb-4 p-3 bg-light rounded">
-                <div class="d-flex align-items-center gap-4">
-                    <div>
-                        <label class="font-weight-bold">Tipo de período:</label>
-                    </div>
-                    <div class="d-flex gap-3">
-                        <div class="field-radiobutton">
-                            <p-radioButton name="periodo" value="mensual" [(ngModel)]="periodoSeleccionado" (onClick)="cambiarPeriodo()"></p-radioButton>
-                            <label class="ms-2">Mensual</label>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-4">
+                        <div>
+                            <label class="font-weight-bold">Tipo de período:</label>
                         </div>
-                        <div class="field-radiobutton">
-                            <p-radioButton name="periodo" value="quincenal" [(ngModel)]="periodoSeleccionado" (onClick)="cambiarPeriodo()"></p-radioButton>
-                            <label class="ms-2">Quincenal</label>
+                        <div class="d-flex gap-3">
+                            <div class="field-radiobutton">
+                                <p-radioButton name="periodo" value="mensual" [(ngModel)]="periodoSeleccionado" (onClick)="cambiarPeriodo()"></p-radioButton>
+                                <label class="ms-2">Mensual</label>
+                            </div>
+                            <div class="field-radiobutton">
+                                <p-radioButton name="periodo" value="quincenal" [(ngModel)]="periodoSeleccionado" (onClick)="cambiarPeriodo()"></p-radioButton>
+                                <label class="ms-2">Quincenal</label>
+                            </div>
                         </div>
+                        <!-- <div>
+                            <button pButton type="button" label="Recalcular Planilla" icon="pi pi-refresh" (click)="calcularPlanilla()"></button>
+                        </div> -->
                     </div>
-                    <div>
-                        <button pButton type="button" label="Recalcular Planilla" icon="pi pi-refresh" (click)="calcularPlanilla()"></button>
-                    </div>
+                    <!-- <div>
+                        <button pButton type="button" label="Generar todas las boletas PDF" icon="pi pi-file-pdf" class="p-button-success" [disabled]="generandoPDF" (click)="generarPDFTodasBoletas()">
+                        </button>
+                    </div> -->
                 </div>
             </div>
 
@@ -78,6 +84,7 @@
                         <th colspan="2" class="text-center">Salario</th>
                         <th colspan="4" class="text-center bg-light">Deducciones del Empleado</th>
                         <th colspan="5" class="text-center bg-light-blue">Aportaciones Patronales</th>
+                        <th rowspan="2" style="width: 80px;">Acciones</th>
                     </tr>
                     <tr>
                         <th class="text-end">Mensual</th>
@@ -118,6 +125,12 @@
                         <td class="text-end">${{ empleado.insaforvPatronal | number:'1.2-2' }}</td>
                         <td class="text-end">${{ empleado.totalPatronal | number:'1.2-2' }}</td>
                         <td class="text-end font-weight-bold">${{ empleado.costoTotal | number:'1.2-2' }}</td>
+
+                        <!-- Nueva columna para acciones -->
+                        <td class="text-center">
+                            <button pButton type="button" icon="pi pi-file" class="p-button-rounded p-button-info p-button-sm" pTooltip="Ver boleta de pago" (click)="verBoleta(empleado)">
+                            </button>
+                        </td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="footer">
@@ -139,6 +152,99 @@
                     </tr>
                 </ng-template>
             </p-table>
+
+            <!-- Modal de boleta de pago -->
+            <p-dialog [(visible)]="mostrarBoleta" [style]="{width: '650px'}" [modal]="true" [closable]="true" [resizable]="false" [draggable]="false" header="Boleta de Pago">
+
+                <div id="boleta-imprimir" class="boleta-contenido">
+                    <!-- Encabezado de la boleta -->
+                    <div class="header">
+                        <div class="info-empresa">
+                            <h2>{{ nombreEmpresa }}</h2>
+                            <p>{{ direccionEmpresa }}</p>
+                        </div>
+                        <h3 class="titulo-boleta">BOLETA DE PAGO</h3>
+                        <p><strong>Período:</strong> {{ periodoPago }}</p>
+                    </div>
+
+                    <!-- Información del empleado -->
+                    <div class="info-empleado">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Empleado:</strong> {{ empleadoSeleccionado?.nombreCompleto }}</p>
+                                <p><strong>ID:</strong> {{ empleadoSeleccionado?.id }}</p>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <p><strong>Fecha de emisión:</strong> {{ fechaCalculo | date:'dd/MM/yyyy' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de ingresos y deducciones -->
+                    <table class="tabla-resumen">
+                        <thead>
+                            <tr>
+                                <th colspan="2">DETALLE DE PAGO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Salario Base {{ periodoSeleccionado === 'quincenal' ? 'Quincenal' : 'Mensual' }}</strong></td>
+                                <td class="text-end">${{ periodoSeleccionado === 'quincenal' ? (empleadoSeleccionado?.salarioQuincenal | number:'1.2-2') : (empleadoSeleccionado?.salarioMensual | number:'1.2-2') }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="bg-light"><strong>Deducciones:</strong></td>
+                            </tr>
+                            <tr>
+                                <td>ISSS (3%)</td>
+                                <td class="text-end">- ${{ empleadoSeleccionado?.isss | number:'1.2-2' }}</td>
+                            </tr>
+                            <tr>
+                                <td>AFP (7.25%)</td>
+                                <td class="text-end">- ${{ empleadoSeleccionado?.afp | number:'1.2-2' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Impuesto sobre la Renta</td>
+                                <td class="text-end">- ${{ empleadoSeleccionado?.renta | number:'1.2-2' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="total">Total Deducciones</td>
+                                <td class="text-end total">- ${{ empleadoSeleccionado?.totalDeducciones | number:'1.2-2' }}</td>
+                            </tr>
+                            <tr class="bg-success-light">
+                                <td class="total">SALARIO NETO A RECIBIR</td>
+                                <td class="text-end total">${{ empleadoSeleccionado?.salarioNeto | number:'1.2-2' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Información adicional -->
+                    <div class="info-adicional">
+                        <p><strong>Nota:</strong> Esta boleta representa el detalle de su pago. Las aportaciones patronales (ISSS, AFP, INSAFORP) son pagadas por la empresa y no afectan su salario.</p>
+                    </div>
+
+                    <!-- Espacio para firma -->
+                    <div class="row mt-5">
+                        <div class="col-md-6 offset-md-3">
+                            <div class="firma">
+                                <p>Firma de recibido</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template pTemplate="footer">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button pButton type="button" icon="pi pi-print" label="Imprimir" class="p-button-primary" (click)="imprimirBoleta()">
+                        </button>
+                        <button pButton type="button" icon="pi pi-file-pdf" label="Descargar PDF" class="p-button-secondary" [disabled]="generandoPDF" [loading]="generandoPDF" (click)="descargarBoleta()">
+                        </button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <!-- Toast para mensajes -->
+            <p-toast></p-toast>
         </div>
     </div>
 </div>
